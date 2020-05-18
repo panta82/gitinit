@@ -17,16 +17,27 @@ TEMPLATE_DESCRIPTIONS[empty]="Just the git, README.md and JetBrains-friendly .gi
 TEMPLATE_DESCRIPTIONS[node]="Node.js template, with package.json and prettier"
 
 usage() {
+  local templates
+  templates=""
+  for template in "${TEMPLATES[@]}"; do
+    templates="${templates}  ${template}\t\t   ${TEMPLATE_DESCRIPTIONS[$template]}\n"
+  done
+
 	cat <<END
-gitinit: Initialize a git project, with some basic boilerplate
+gitinit: Initialize a git project, using a few basic boilerplates that panta likes.
+Should be executed inside the (empty) directory where you want the project to live.
 
 Usage:
-  gitinit [-h|--help] [template]
+  gitinit [-h|--help][-f|--force] [template]
 
 Switches:
   -h|--help        Print this help screen and exit
+  -f|--force       Force execution of the template even if directory is not empty.
 
 END
+echo "Templates:"
+echo -e "${templates}"
+echo -e "If you don't specify a template, you will be asked to pick one interactively\n"
 }
 
 log() {
@@ -97,6 +108,8 @@ exec_init() {
 }
 
 exec_empty() {
+  validate_empty_dir
+
   exec_init
 
   cat "$DIR/assets/gitignore_custom" >> .gitignore
@@ -108,6 +121,8 @@ exec_empty() {
 }
 
 exec_node() {
+  validate_empty_dir
+
   exec_init
 
   log "Preparing package.json..."
@@ -133,8 +148,6 @@ exec_node() {
 main() {
   parse_args "$*"
 
-  validate_empty_dir
-
   if  [[ -z $TEMPLATE ]]; then
     ask_for_template
   fi
@@ -144,6 +157,8 @@ main() {
     exit 0
   fi
 
+  # shellcheck disable=SC2199
+  # shellcheck disable=SC2076
   [[ ! " ${TEMPLATES[@]} " =~ " ${TEMPLATE} " ]] && fatal "Invalid template: ${TEMPLATE}"
 
   log "Creating project named \"${NAME}\" using template \"${TEMPLATE}\"..."
