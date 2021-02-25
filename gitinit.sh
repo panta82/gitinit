@@ -8,13 +8,14 @@ DIR="$(dirname "$(readlink -f "$0")")"
 # Get project name based on current directory name
 NAME=${PWD##*/}
 TEMPLATE=""
-TEMPLATES=( empty node )
+TEMPLATES=( empty node ts_module )
 FORCE=false
 
 # Template descriptions
 declare -A TEMPLATE_DESCRIPTIONS
 TEMPLATE_DESCRIPTIONS[empty]="Just the git, README.md and JetBrains-friendly .gitignore"
-TEMPLATE_DESCRIPTIONS[node]="Node.js template, with package.json and prettier"
+TEMPLATE_DESCRIPTIONS[node]="Empty node.js project with package.json and prettier"
+TEMPLATE_DESCRIPTIONS[ts_module]="Node.js project with typescript, jest and eslint"
 
 usage() {
   local templates
@@ -126,13 +127,13 @@ exec_node() {
   exec_init
 
   log "Preparing package.json..."
-  cat "${DIR}/assets/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
+  cat "${DIR}/assets/node/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
 
   log "Preparing prettier..."
   cp "${DIR}/assets/.prettierrc.yaml" "./.prettierrc.yaml"
 
   log "Adding node stuff to gitignore..."
-  cat "$DIR/assets/gitignore_node" >> .gitignore
+  cat "$DIR/assets/node/gitignore_node" >> .gitignore
 
   log "Installing node modules..."
   npm install > /dev/null 2>&1
@@ -143,6 +144,48 @@ exec_node() {
   git add .
   git commit -m "Initial"
   log "Node project initialized"
+}
+
+exec_ts_module() {
+  validate_empty_dir
+
+  exec_init
+
+  log "Preparing package.json..."
+  cat "${DIR}/assets/ts/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
+  npm install > /dev/null 2>&1
+
+  log "Preparing prettier..."
+  cp "${DIR}/assets/.prettierrc.yaml" "./.prettierrc.yaml"
+
+  log "Adding node stuff to gitignore..."
+  cat "$DIR/assets/node/gitignore_node" >> .gitignore
+
+  log "Adding typescript stuff to gitignore..."
+  cat "$DIR/assets/ts/gitignore_ts" >> .gitignore
+
+  cat "$DIR/assets/gitignore_custom" >> .gitignore
+
+  log "Adding typescript..."
+  cp "${DIR}/assets/ts/tsconfig.json" "./tsconfig.json"
+  npm install --save-dev typescript  > /dev/null 2>&1
+
+  log "Adding eslint..."
+  cp "${DIR}/assets/ts/eslintrc.js" "./.eslintrc.js"
+  npm install --save-dev "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier"  > /dev/null 2>&1
+
+  log "Adding jest..."
+  cp "${DIR}/assets/ts/jest.config.js" "./jest.config.js"
+  npm install --save-dev "@types/jest" "jest" "ts-jest"  > /dev/null 2>&1
+
+  log "Copying initial files..."
+  cp -r "${DIR}/assets/ts/spec" "./spec"
+  cp -r "${DIR}/assets/ts/src" "./src"
+
+  log "Creating initial commit..."
+  git add .
+  git commit -m "Initial"
+  log "Typescript module project initialized"
 }
 
 main() {

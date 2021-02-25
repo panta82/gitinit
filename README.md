@@ -8,7 +8,7 @@ Just a little tool to generate project boilerplates that I like.
 cd /opt
 sudo git clone https://github.com/panta82/gitinit
 cd /opt/gitinit
-sudo ./install.sh 
+sudo ./install.sh
 ```
 
 ### Usage

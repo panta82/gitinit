@@ -1,0 +1,17 @@
+{
+	"name": "$NAME",
+	"version": "0.0.1",
+	"description": "Project $NAME",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "watch": "jest --watchAll"
+  },
+  "devDependencies": {
+    "prettier": "latest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
