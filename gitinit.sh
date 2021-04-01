@@ -8,7 +8,7 @@ DIR="$(dirname "$(readlink -f "$0")")"
 # Get project name based on current directory name
 NAME=${PWD##*/}
 TEMPLATE=""
-TEMPLATES=( empty node ts_module )
+TEMPLATES=( empty node ts_module ts_cra )
 FORCE=false
 
 # Template descriptions
@@ -16,6 +16,7 @@ declare -A TEMPLATE_DESCRIPTIONS
 TEMPLATE_DESCRIPTIONS[empty]="Just the git, README.md and JetBrains-friendly .gitignore"
 TEMPLATE_DESCRIPTIONS[node]="Empty node.js project with package.json and prettier"
 TEMPLATE_DESCRIPTIONS[ts_module]="Node.js project with typescript, jest and eslint"
+TEMPLATE_DESCRIPTIONS[ts_cra]="CreateReactApp with typescript, prettier and eslint"
 
 usage() {
   local templates
@@ -133,7 +134,7 @@ exec_node() {
   cp "${DIR}/assets/.prettierrc.yaml" "./.prettierrc.yaml"
 
   log "Adding node stuff to gitignore..."
-  cat "$DIR/assets/node/gitignore_node" >> .gitignore
+  cat "$DIR/assets/gitignore_node" >> .gitignore
 
   log "Installing node modules..."
   npm install > /dev/null 2>&1
@@ -152,40 +153,71 @@ exec_ts_module() {
   exec_init
 
   log "Preparing package.json..."
-  cat "${DIR}/assets/ts/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
+  cat "${DIR}/assets/ts_module/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
   npm install > /dev/null 2>&1
 
   log "Preparing prettier..."
   cp "${DIR}/assets/.prettierrc.yaml" "./.prettierrc.yaml"
 
-  log "Adding node stuff to gitignore..."
-  cat "$DIR/assets/node/gitignore_node" >> .gitignore
-
-  log "Adding typescript stuff to gitignore..."
-  cat "$DIR/assets/ts/gitignore_ts" >> .gitignore
-
+  log "Generating gitignore..."
+  cat "$DIR/assets/gitignore_node" >> .gitignore
+  cat "$DIR/assets/ts_module/gitignore_custom" >> .gitignore
   cat "$DIR/assets/gitignore_custom" >> .gitignore
 
   log "Adding typescript..."
-  cp "${DIR}/assets/ts/tsconfig.json" "./tsconfig.json"
+  cp "${DIR}/assets/ts_module/tsconfig.json" "./tsconfig.json"
   npm install --save-dev typescript  > /dev/null 2>&1
 
   log "Adding eslint..."
-  cp "${DIR}/assets/ts/eslintrc.js" "./.eslintrc.js"
+  cp "${DIR}/assets/ts_module/eslintrc.js" "./.eslintrc.js"
   npm install --save-dev "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier"  > /dev/null 2>&1
 
   log "Adding jest..."
-  cp "${DIR}/assets/ts/jest.config.js" "./jest.config.js"
+  cp "${DIR}/assets/ts_module/jest.config.js" "./jest.config.js"
   npm install --save-dev "@types/jest" "jest" "ts-jest"  > /dev/null 2>&1
 
   log "Copying initial files..."
-  cp -r "${DIR}/assets/ts/spec" "./spec"
-  cp -r "${DIR}/assets/ts/src" "./src"
+  cp -r "${DIR}/assets/ts_module/spec" "./spec"
+  cp -r "${DIR}/assets/ts_module/src" "./src"
 
   log "Creating initial commit..."
   git add .
   git commit -m "Initial"
   log "Typescript module project initialized"
+}
+
+exec_ts_cra() {
+  validate_empty_dir
+
+  exec_init
+
+  log "Copying files..."
+  cp -rf "${DIR}/assets/ts_cra/public" "./"
+  cp -rf "${DIR}/assets/ts_cra/scripts" "./"
+  cp -rf "${DIR}/assets/ts_cra/src" "./"
+  cp "${DIR}/assets/ts_cra/.env" "./"
+  cp "${DIR}/assets/ts_cra/.eslintrc.js" "./"
+  cp "${DIR}/assets/ts_cra/.prettierrc.yaml" "./"
+  cp "${DIR}/assets/ts_cra/tsconfig.json" "./"
+
+  log "Preparing package.json..."
+  cat "${DIR}/assets/ts_cra/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
+
+  log "Generating .gitignore..."
+  cat "$DIR/assets/gitignore_node" >> .gitignore
+  cat "$DIR/assets/ts_cra/gitignore_custom" >> .gitignore
+  cat "$DIR/assets/gitignore_custom" >> .gitignore
+
+  log "Installing modules..."
+  yarn add "react" "react-dom" > /dev/null 2>&1
+
+  log "Installing dev modules..."
+  yarn add --dev "@testing-library/jest-dom" "@testing-library/react" "@testing-library/user-event" "@types/jest" "@types/node" "@types/react" "@types/react-dom" "react-scripts" "typescript" "web-vitals" "prettier" "prettier-plugin-import-sort" "import-sort-style-module" > /dev/null 2>&1
+
+  log "Creating initial commit..."
+  git add .
+  git commit -m "Initial"
+  log "CreateReactApp project initialized"
 }
 
 main() {

@@ -1,0 +1,6 @@
+printWidth: 100
+singleQuote: true
+trailingComma: es5
+arrowParens: avoid
+plugins:
+  - scripts/prettier_plugin_ensure_node_env_is_set.js
