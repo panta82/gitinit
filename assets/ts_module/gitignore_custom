@@ -2,5 +2,6 @@
 ### Typescript module ###
 #########################
 
-/lib
+/dist
 package-lock.json
+

@@ -18,6 +18,10 @@ TEMPLATE_DESCRIPTIONS[node]="Empty node.js project with package.json and prettie
 TEMPLATE_DESCRIPTIONS[ts_module]="Node.js project with typescript, jest and eslint"
 TEMPLATE_DESCRIPTIONS[ts_cra]="CreateReactApp with typescript, prettier and eslint"
 
+LOG_FILE="/tmp/gitinit.log"
+echo "Executed at $(date --iso-8601=seconds)" > $LOG_FILE
+echo "--------------------------------------" >> $LOG_FILE
+
 usage() {
   local templates
   templates=""
@@ -53,6 +57,13 @@ warning() {
 error() {
   echo "[ERROR] $*" >&2
 }
+
+error_trap() {
+  error "Command has returned an error code. This is the full output log from ${LOG_FILE}:"
+  cat "${LOG_FILE}"
+  exit 1
+}
+trap error_trap ERR EXIT
 
 fatal() {
 	error "$*"
@@ -137,7 +148,7 @@ exec_node() {
   cat "$DIR/assets/gitignore_node" >> .gitignore
 
   log "Installing node modules..."
-  npm install > /dev/null 2>&1
+  npm install >> $LOG_FILE 2>&1
 
   cat "$DIR/assets/gitignore_custom" >> .gitignore
 
@@ -154,7 +165,7 @@ exec_ts_module() {
 
   log "Preparing package.json..."
   cat "${DIR}/assets/ts_module/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
-  npm install > /dev/null 2>&1
+  npm install >> $LOG_FILE 2>&1
 
   log "Preparing prettier..."
   cp "${DIR}/assets/.prettierrc.yaml" "./.prettierrc.yaml"
@@ -166,19 +177,24 @@ exec_ts_module() {
 
   log "Adding typescript..."
   cp "${DIR}/assets/ts_module/tsconfig.json" "./tsconfig.json"
-  npm install --save-dev typescript  > /dev/null 2>&1
+  npm install --save-dev typescript  >> $LOG_FILE 2>&1
 
   log "Adding eslint..."
   cp "${DIR}/assets/ts_module/eslintrc.js" "./.eslintrc.js"
-  npm install --save-dev "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier"  > /dev/null 2>&1
+  npm install --save-dev "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier" "prettier-plugin-import-sort" "import-sort-style-module"  >> $LOG_FILE 2>&1
 
   log "Adding jest..."
   cp "${DIR}/assets/ts_module/jest.config.js" "./jest.config.js"
-  npm install --save-dev "@types/jest" "jest" "ts-jest"  > /dev/null 2>&1
+  npm install --save-dev "@types/jest" "jest" "ts-jest"  >> $LOG_FILE 2>&1
 
   log "Copying initial files..."
   cp -r "${DIR}/assets/ts_module/spec" "./spec"
   cp -r "${DIR}/assets/ts_module/src" "./src"
+
+  log "Setting up JetBrains project..."
+  cp -r "${DIR}/assets/ts_module/.idea" "./.idea"
+  mv "./.idea/project-name.iml" "./.idea/${NAME}.iml"
+  sed -i "s/\$NAME/${NAME}/g" "./.idea/modules.xml"
 
   log "Creating initial commit..."
   git add .
@@ -209,10 +225,10 @@ exec_ts_cra() {
   cat "$DIR/assets/gitignore_custom" >> .gitignore
 
   log "Installing modules..."
-  yarn add "react" "react-dom" > /dev/null 2>&1
+  yarn add "react" "react-dom" >> $LOG_FILE 2>&1
 
   log "Installing dev modules..."
-  yarn add --dev "@testing-library/jest-dom" "@testing-library/react" "@testing-library/user-event" "@types/jest" "@types/node" "@types/react" "@types/react-dom" "react-scripts" "typescript" "web-vitals" "prettier" "prettier-plugin-import-sort" "import-sort-style-module" > /dev/null 2>&1
+  yarn add --dev "@testing-library/jest-dom" "@testing-library/react" "@testing-library/user-event" "@types/jest" "@types/node" "@types/react" "@types/react-dom" "react-scripts" "typescript" "web-vitals" "prettier" "prettier-plugin-import-sort" "import-sort-style-module" >> $LOG_FILE 2>&1
 
   log "Creating initial commit..."
   git add .

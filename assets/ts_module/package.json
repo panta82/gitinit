@@ -1,17 +1,29 @@
 {
-	"name": "$NAME",
-	"version": "0.0.1",
-	"description": "Project $NAME",
-  "main": "index.js",
+  "name": "$NAME",
+  "version": "0.0.1",
+  "description": "Project $NAME",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "tsc",
     "test": "jest",
-    "watch": "jest --watchAll"
+    "watch": "jest --watchAll",
+    "lint": "eslint ./src"
   },
   "devDependencies": {
     "prettier": "latest"
   },
   "keywords": [],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "importSort": {
+    ".ts, .tsx": {
+      "style": "module",
+      "parser": "typescript"
+    },
+    ".js, .jsx": {
+      "style": "module"
+    }
+  }
 }
