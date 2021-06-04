@@ -63,7 +63,7 @@ error_trap() {
   cat "${LOG_FILE}"
   exit 1
 }
-trap error_trap ERR EXIT
+trap error_trap ERR
 
 fatal() {
 	error "$*"
