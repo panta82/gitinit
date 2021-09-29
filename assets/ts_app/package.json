@@ -1,0 +1,30 @@
+{
+  "name": "$NAME",
+  "version": "0.0.1",
+  "description": "Project $NAME",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "support/build.sh",
+    "start": "ts-node-script src/bin/app.ts",
+    "repl": "src/bin/repl",
+    "test": "jest",
+    "watch": "jest --watchAll",
+    "lint": "eslint ./src"
+  },
+  "devDependencies": {
+    "prettier": "latest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "importSort": {
+    ".ts, .tsx": {
+      "style": "module",
+      "parser": "typescript"
+    },
+    ".js, .jsx": {
+      "style": "module"
+    }
+  }
+}

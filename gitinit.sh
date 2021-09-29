@@ -8,14 +8,15 @@ DIR="$(dirname "$(readlink -f "$0")")"
 # Get project name based on current directory name
 NAME=${PWD##*/}
 TEMPLATE=""
-TEMPLATES=( empty node ts_module ts_cra )
+TEMPLATES=( empty node ts_module ts_app ts_cra )
 FORCE=false
 
 # Template descriptions
 declare -A TEMPLATE_DESCRIPTIONS
 TEMPLATE_DESCRIPTIONS[empty]="Just the git, README.md and JetBrains-friendly .gitignore"
 TEMPLATE_DESCRIPTIONS[node]="Empty node.js project with package.json and prettier"
-TEMPLATE_DESCRIPTIONS[ts_module]="Node.js project with typescript, jest and eslint"
+TEMPLATE_DESCRIPTIONS[ts_module]="Node.js module project with typescript, jest and eslint"
+TEMPLATE_DESCRIPTIONS[ts_app]="Node.js app project with typescript, jest and eslint"
 TEMPLATE_DESCRIPTIONS[ts_cra]="CreateReactApp with typescript, prettier and eslint"
 
 LOG_FILE="/tmp/gitinit.log"
@@ -94,7 +95,7 @@ ask_for_template() {
     options+=("${TEMPLATE_DESCRIPTIONS[$template]}")
   done
 
-  TEMPLATE=$(dialog --keep-tite --clear --backtitle "gitinit template" --title "Select template to use" --menu "Choose one of the following templates:" 15 80 4 "${options[@]}" 2>&1 >/dev/tty)
+  TEMPLATE=$(dialog --keep-tite --clear --backtitle "gitinit template" --title "Select template to use" --menu "Choose one of the following templates:" 15 80 8 "${options[@]}" 2>&1 >/dev/tty)
 }
 
 validate_empty_dir() {
@@ -200,6 +201,59 @@ exec_ts_module() {
   git add .
   git commit -m "Initial"
   log "Typescript module project initialized"
+}
+
+exec_ts_app() {
+  validate_empty_dir
+
+  exec_init
+
+  log "Preparing package.json..."
+  cat "${DIR}/assets/ts_app/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
+
+  log "Preparing prettier..."
+  cp "${DIR}/assets/.prettierrc.yaml" "./.prettierrc.yaml"
+
+  log "Generating gitignore..."
+  cat "$DIR/assets/gitignore_node" >> .gitignore
+  cat "$DIR/assets/ts_app/gitignore_custom" >> .gitignore
+  cat "$DIR/assets/gitignore_custom" >> .gitignore
+
+  log "Adding typescript..."
+  cp "${DIR}/assets/ts_app/tsconfig.json" "./tsconfig.json"
+
+  log "Adding eslint..."
+  cp "${DIR}/assets/ts_app/eslintrc.js" "./.eslintrc.js"
+
+  log "Adding jest..."
+  cp "${DIR}/assets/ts_app/jest.config.js" "./jest.config.js"
+
+  log "Copying initial files..."
+  cp -r "${DIR}/assets/ts_app/support" "./support"
+  cp -r "${DIR}/assets/ts_app/spec" "./spec"
+  cp -r "${DIR}/assets/ts_app/src" "./src"
+
+  log "Setting up logo..."
+  echo -e "\n\n${NAME}" > './src/assets/logo-ascii.txt'
+
+  log "Setting up JetBrains project..."
+  cp -r "${DIR}/assets/ts_app/.idea" "./.idea"
+  mv "./.idea/project-name.iml" "./.idea/${NAME}.iml"
+  sed -i "s/\$NAME/${NAME}/g" "./.idea/modules.xml"
+
+  log "Adding dev dependencies..."
+  npm install --save-dev "typescript" "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier" "prettier-plugin-import-sort" "import-sort-style-module" "@types/jest" "jest" "ts-jest"  >> $LOG_FILE 2>&1
+
+  log "Adding dependencies..."
+  npm install --save "talented-logger" "talented-args" >> $LOG_FILE 2>&1
+
+  log "Updating dependencies..."
+  npm install >> $LOG_FILE 2>&1
+
+  log "Creating initial commit..."
+  git add .
+  git commit -m "Initial"
+  log "Typescript app project initialized"
 }
 
 exec_ts_cra() {

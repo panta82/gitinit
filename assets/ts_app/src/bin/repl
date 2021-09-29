@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 # PROJECT/src/bin
+cd .. # PROJECT/src
+cd .. # PROJECT
+
+echo "Compiling..."
+support/build.sh --incremental
+
+echo "Running..."
+node --inspect -r ./dist/support/repl_setup.js
