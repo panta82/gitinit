@@ -234,7 +234,7 @@ exec_ts_app() {
   cp -r "${DIR}/assets/ts_app/src" "./src"
 
   log "Setting up logo..."
-  mkdir './src/assets/'
+  mkdir -p './src/assets/'
   echo -e "\n\n${NAME}" > './src/assets/logo-ascii.txt'
 
   log "Setting up JetBrains project..."
