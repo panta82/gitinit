@@ -182,7 +182,7 @@ exec_ts_module() {
 
   log "Adding eslint..."
   cp "${DIR}/assets/ts_module/eslintrc.js" "./.eslintrc.js"
-  npm install --save-dev "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier" "prettier-plugin-import-sort" "import-sort-style-module"  >> $LOG_FILE 2>&1
+  npm install --save-dev "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier" "prettier-plugin-import-sort" "import-sort-style-panta"  >> $LOG_FILE 2>&1
 
   log "Adding jest..."
   cp "${DIR}/assets/ts_module/jest.config.js" "./jest.config.js"
@@ -243,7 +243,7 @@ exec_ts_app() {
   sed -i "s/\$NAME/${NAME}/g" "./.idea/modules.xml"
 
   log "Adding dev dependencies..."
-  npm install --save-dev "typescript" "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier" "prettier-plugin-import-sort" "import-sort-style-module" "@types/jest" "jest" "ts-jest"  >> $LOG_FILE 2>&1
+  npm install --save-dev "typescript" "@typescript-eslint/eslint-plugin" "@typescript-eslint/parser" "eslint" "eslint-config-prettier" "prettier-plugin-import-sort" "import-sort-style-panta" "@types/jest" "jest" "ts-jest"  >> $LOG_FILE 2>&1
 
   log "Adding dependencies..."
   npm install --save "talented-logger" "talented-args" >> $LOG_FILE 2>&1
@@ -283,7 +283,7 @@ exec_ts_cra() {
   yarn add "react" "react-dom" >> $LOG_FILE 2>&1
 
   log "Installing dev modules..."
-  yarn add --dev "@testing-library/jest-dom" "@testing-library/react" "@testing-library/user-event" "@types/jest" "@types/node" "@types/react" "@types/react-dom" "react-scripts" "typescript" "web-vitals" "prettier" "prettier-plugin-import-sort" "import-sort-style-module" >> $LOG_FILE 2>&1
+  yarn add --dev "@testing-library/jest-dom" "@testing-library/react" "@testing-library/user-event" "@types/jest" "@types/node" "@types/react" "@types/react-dom" "react-scripts" "typescript" "web-vitals" "prettier" "prettier-plugin-import-sort" "import-sort-style-panta" >> $LOG_FILE 2>&1
 
   log "Creating initial commit..."
   git add .

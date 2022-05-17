@@ -19,11 +19,11 @@
   "license": "MIT",
   "importSort": {
     ".ts, .tsx": {
-      "style": "module",
+      "style": "panta",
       "parser": "typescript"
     },
     ".js, .jsx": {
-      "style": "module"
+      "style": "panta"
     }
   }
 }
