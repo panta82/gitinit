@@ -13,7 +13,7 @@ FORCE=false
 
 # Template descriptions
 declare -A TEMPLATE_DESCRIPTIONS
-TEMPLATE_DESCRIPTIONS[empty]="Just the git, README.md and JetBrains-friendly .gitignore"
+TEMPLATE_DESCRIPTIONS[empty]="Just git init, README.md and a minimal .gitignore"
 TEMPLATE_DESCRIPTIONS[node]="Empty node.js project with package.json and prettier"
 TEMPLATE_DESCRIPTIONS[ts_module]="Node.js module project with typescript, jest and eslint"
 TEMPLATE_DESCRIPTIONS[ts_app]="Node.js app project with typescript, jest and eslint"
@@ -117,7 +117,7 @@ exec_init() {
   git init
   log "Generating README..."
   echo "# ${NAME}" > ./README.md
-  cat "$DIR/assets/gitignore_idea" > .gitignore
+  : > .gitignore
 }
 
 exec_empty() {
