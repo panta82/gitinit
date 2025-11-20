@@ -6,7 +6,6 @@ Available templates:
 - `empty` Just the git, README.md and JetBrains-friendly .gitignore
 - `node` Empty node.js project with package.json and prettier
 - `ts_module` Node.js project with typescript, jest and eslint
-- `ts_cra` CreateReactApp with typescript, prettier and eslint
 
 ### Installation
 

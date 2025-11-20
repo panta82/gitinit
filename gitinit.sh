@@ -8,7 +8,7 @@ DIR="$(dirname "$(readlink -f "$0")")"
 # Get project name based on current directory name
 NAME=${PWD##*/}
 TEMPLATE=""
-TEMPLATES=( empty node ts_module ts_app ts_cra )
+TEMPLATES=( empty node ts_module ts_app )
 FORCE=false
 
 # Template descriptions
@@ -17,7 +17,6 @@ TEMPLATE_DESCRIPTIONS[empty]="Just the git, README.md and JetBrains-friendly .gi
 TEMPLATE_DESCRIPTIONS[node]="Empty node.js project with package.json and prettier"
 TEMPLATE_DESCRIPTIONS[ts_module]="Node.js module project with typescript, jest and eslint"
 TEMPLATE_DESCRIPTIONS[ts_app]="Node.js app project with typescript, jest and eslint"
-TEMPLATE_DESCRIPTIONS[ts_cra]="CreateReactApp with typescript, prettier and eslint"
 
 LOG_FILE="/tmp/gitinit.log"
 echo "Executed at $(date --iso-8601=seconds)" > $LOG_FILE
@@ -251,40 +250,6 @@ exec_ts_app() {
   git add .
   git commit -m "Initial"
   log "Typescript app project initialized"
-}
-
-exec_ts_cra() {
-  validate_empty_dir
-
-  exec_init
-
-  log "Copying files..."
-  cp -rf "${DIR}/assets/ts_cra/public" "./"
-  cp -rf "${DIR}/assets/ts_cra/scripts" "./"
-  cp -rf "${DIR}/assets/ts_cra/src" "./"
-  cp "${DIR}/assets/ts_cra/.env" "./"
-  cp "${DIR}/assets/ts_cra/.eslintrc.js" "./"
-  cp "${DIR}/assets/ts_cra/.prettierrc.yaml" "./"
-  cp "${DIR}/assets/ts_cra/tsconfig.json" "./"
-
-  log "Preparing package.json..."
-  cat "${DIR}/assets/ts_cra/package.json" | sed -E 's/\$NAME/'"${NAME}"'/' > package.json
-
-  log "Generating .gitignore..."
-  cat "$DIR/assets/gitignore_node" >> .gitignore
-  cat "$DIR/assets/ts_cra/gitignore_custom" >> .gitignore
-  cat "$DIR/assets/gitignore_custom" >> .gitignore
-
-  log "Installing modules..."
-  yarn add "react" "react-dom" >> $LOG_FILE 2>&1
-
-  log "Installing dev modules..."
-  yarn add --dev "@testing-library/jest-dom" "@testing-library/react" "@testing-library/user-event" "@types/jest" "@types/node" "@types/react" "@types/react-dom" "react-scripts" "typescript" "web-vitals" "prettier" "prettier-plugin-import-sort" "import-sort-style-panta" >> $LOG_FILE 2>&1
-
-  log "Creating initial commit..."
-  git add .
-  git commit -m "Initial"
-  log "CreateReactApp project initialized"
 }
 
 main() {
