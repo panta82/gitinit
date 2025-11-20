@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "lib": ["dom", "es2017"],
+    "jsx": "react",
     "declaration": true,
-    "outDir": "./dist",
+    "declarationDir": "./dist/types",
+    "sourceMap": true,
     "strict": false,
-    "noImplicitAny": false,
-		"sourceMap": true
+    "noImplicitAny": false
   },
   "include": ["src"],
-  "exclude": ["node_modules", "**/__tests__/*"]
+  "exclude": ["node_modules", "dist"]
 }
